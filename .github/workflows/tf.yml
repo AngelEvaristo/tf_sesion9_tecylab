@@ -10,6 +10,12 @@ jobs:
       - name: checkout Repository
         uses: actions/checkout@v4
 
+      - name: Configuracion AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: $ {{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-2
+
       - name: Setum TerraformTest
         uses: hashicorp/setup-terraform@v3
         with:
@@ -19,12 +25,9 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan -var="nombre=tecylabTest"
+        run: terraform plan -out=tfplan
       
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var="nombre=tecylabTest"
-
-      - name: Validar file
-        run: ls  
+        run: terraform apply -auto-approve tfplan
 
         
